@@ -23,7 +23,8 @@ class PlaylistChangeSet < ChangeSet
   def primary_terms
     [
       :title,
-      :part_of
+      :part_of,
+      :downloadable
     ]
   end
 end

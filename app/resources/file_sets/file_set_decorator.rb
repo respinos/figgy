@@ -33,4 +33,8 @@ class FileSetDecorator < Valkyrie::ResourceDecorator
   def collection_slugs
     []
   end
+
+  def downloadable?
+    parent.downloadable?
+  end
 end

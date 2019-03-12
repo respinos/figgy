@@ -87,6 +87,10 @@ class Valkyrie::ResourceDecorator < ApplicationDecorator
     false
   end
 
+  def downloadable?
+    downloadable == "public"
+  end
+
   def attachable_objects
     []
   end
