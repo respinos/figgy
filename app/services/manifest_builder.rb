@@ -180,7 +180,7 @@ class ManifestBuilder
     end
 
     def sequence_rendering
-      return [] if audio_manifest?
+      return [] if audio_manifest? || !decorate.downloadable?
       [
         {
           "@id" => helper.pdf_url(resource),
@@ -392,6 +392,12 @@ class ManifestBuilder
     def id
       structure.proxy.first.to_s
     end
+
+    # Determine if the resource can be downloaded
+    # @return [Boolean]
+    def downloadable?
+      false
+    end
   end
 
   ##
@@ -433,7 +439,7 @@ class ManifestBuilder
     end
 
     def download_url
-      return if derivative.nil?
+      return if derivative.nil? || !downloadable?
       if helper.token_authorizable?(parent_node.resource)
         helper.download_url(resource.try(:proxied_object_id) || resource.id, derivative.id, auth_token: parent_node.resource.auth_token)
       else
@@ -456,6 +462,12 @@ class ManifestBuilder
       helper.manifest_image_medium_path(resource)
     rescue
       ""
+    end
+
+    # Determine if the resource can be downloaded
+    # @return [Boolean]
+    def downloadable?
+      resource.decorate.downloadable?
     end
 
     private
@@ -613,11 +625,12 @@ class ManifestBuilder
     def manifest
       @manifest ||= begin
         # note this assumes audio resources use flat modeling
-        if audio_files(resource.try(:leaf_nodes)).empty?
-          IIIFManifest::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocator).to_h
-        else
-          IIIFManifest::V3::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocatorV3).to_h
-        end
+        #if audio_files(resource.try(:leaf_nodes)).empty?
+        #  IIIFManifest::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocator).to_h
+        #else
+        #  IIIFManifest::V3::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocatorV3).to_h
+        #end
+        IIIFManifest::V3::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocatorV3).to_h
       end
     end
 
