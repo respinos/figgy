@@ -625,12 +625,11 @@ class ManifestBuilder
     def manifest
       @manifest ||= begin
         # note this assumes audio resources use flat modeling
-        #if audio_files(resource.try(:leaf_nodes)).empty?
-        #  IIIFManifest::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocator).to_h
-        #else
-        #  IIIFManifest::V3::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocatorV3).to_h
-        #end
-        IIIFManifest::V3::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocatorV3).to_h
+        if audio_files(resource.try(:leaf_nodes)).empty?
+          IIIFManifest::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocator).to_h
+        else
+          IIIFManifest::V3::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocatorV3).to_h
+        end
       end
     end
 
