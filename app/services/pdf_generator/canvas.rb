@@ -20,28 +20,28 @@ class PDFGenerator
     # Ensure that the IIIF Manifest canvas has a valid structure
     # @raise [InvalidIIIFManifestError]
     def validate!
-      raise(InvalidIIIFManifestError, "IIIF Manifest canvas does not reference a resource") unless canvas.key?("resource")
-      raise(InvalidIIIFManifestError, "IIIF Manifest canvas does not specify a width") unless canvas["resource"].key?("width") && canvas["resource"]["width"]
-      raise(InvalidIIIFManifestError, "IIIF Manifest canvas does not specify a height") unless canvas["resource"].key?("height") && canvas["resource"]["height"]
-      raise(InvalidIIIFManifestError, "IIIF Manifest canvas does not specify a service URL") unless canvas["resource"].key?("service") && canvas["resource"]["service"].key?("@id")
+      raise(InvalidIIIFManifestError, "IIIF Manifest canvas does not reference a resource") unless canvas.key?("id")
+      raise(InvalidIIIFManifestError, "IIIF Manifest canvas does not specify a width") unless canvas.key?("width")
+      raise(InvalidIIIFManifestError, "IIIF Manifest canvas does not specify a height") unless canvas.key?("height")
+      raise(InvalidIIIFManifestError, "IIIF Manifest canvas does not specify a service URL") unless canvas.key?("service") && !canvas["service"].empty? && canvas["service"].first.key?("id")
     end
 
     # Access the width for the canvas
     # @return [Integer]
     def width
-      canvas["resource"]["width"].to_i
+      canvas["width"]
     end
 
     # Access the height for the canvas
     # @return [Integer]
     def height
-      canvas["resource"]["height"].to_i
+      canvas["height"]
     end
 
     # Access the URL for the IIIF image server
     # @return [String]
     def url
-      canvas["resource"]["service"]["@id"]
+      canvas["service"].first["id"]
     end
   end
 end

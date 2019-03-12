@@ -62,23 +62,32 @@ class PDFGenerator
     @manifest ||= ManifestBuilder.new(resource).build
   end
 
-  # Retrieve the fist IIIF Manifest Sequence in the Manifest
-  # @return [Hash]
-  def first_manifest_sequence
-    manifest["sequences"][0]
-  end
-
   # Retrieve all of the IIIF Manifest Canvases in the first Sequence
   # @return [Hash]
   def manifest_canvases
-    first_manifest_sequence["canvases"]
+    manifest["items"]
+  end
+
+  def canvas_image(canvas)
+    annotation_pages = canvas["items"]
+    return if annotation_pages.empty?
+
+    annotations = annotation_pages.first["items"]
+    valid_annotations = annotations.select { |anno| anno.key?("body") }
+    return if valid_annotations.empty?
+
+    valid_annotations.first["body"]
+  end
+
+  def manifest_images
+    manifest_canvases.map { |canvas| canvas_image(canvas) }
   end
 
   # For each IIIF Manifest Canvas in the first Sequence, retrieve the first
   #   Image and use it to construct a Canvas Object
   # @return [Array<Canvas>]
   def canvas_images
-    @canvas_images ||= manifest_canvases.map { |x| x["images"].first }.map do |x|
+    @canvas_images ||= manifest_images.map do |x|
       Canvas.new(x)
     end
   end

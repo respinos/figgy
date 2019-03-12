@@ -447,14 +447,24 @@ class ManifestBuilder
       end
     end
 
-    def display_content
-      return unless file.mime_type.first.include?("audio")
+    def audio_display_content
       @display_content ||= IIIFManifest::V3::DisplayContent.new(
         download_url,
         format: "application/vnd.apple.mpegurl",
         label: resource.title.first,
         duration: file.duration.first.to_f,
         type: "Audio" # required for the viewer to play audio correctly
+      )
+    end
+
+    def display_content
+      return audio_display_content if file.mime_type.first.include?("audio")
+
+      @display_content ||= IIIFManifest::V3::DisplayContent.new(
+        download_url,
+        format: file.mime_type.first,
+        label: resource.title.first,
+        type: "Image"
       )
     end
 
@@ -625,11 +635,7 @@ class ManifestBuilder
     def manifest
       @manifest ||= begin
         # note this assumes audio resources use flat modeling
-        if audio_files(resource.try(:leaf_nodes)).empty?
-          IIIFManifest::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocator).to_h
-        else
-          IIIFManifest::V3::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocatorV3).to_h
-        end
+        IIIFManifest::V3::ManifestFactory.new(@resource, manifest_service_locator: ManifestServiceLocatorV3).to_h
       end
     end
 
