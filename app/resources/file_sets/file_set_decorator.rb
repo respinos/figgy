@@ -34,7 +34,5 @@ class FileSetDecorator < Valkyrie::ResourceDecorator
     []
   end
 
-  def downloadable?
-    parent.downloadable?
-  end
+  delegate :downloadable?, to: :parent
 end
