@@ -7,7 +7,6 @@ class ManifestBuilder
     def apply(manifest)
       manifest = super
       manifest.viewing_direction = viewing_direction if viewing_direction.present? && manifest.respond_to?(:viewing_direction=)
-      manifest["service"] = { "@context" => "http://universalviewer.io/context.json", "profile" => "http://universalviewer.io/ui-extensions-profile", "disableUI" => ["mediaDownload"] } if !record.decorate.downloadable?
       manifest
     end
 
