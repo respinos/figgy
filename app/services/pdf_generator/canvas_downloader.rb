@@ -42,16 +42,19 @@ class PDFGenerator
       end
 
       def max_dimensions
-        { height: (Canvas::LETTER_HEIGHT * scale_factor).round, width: (Canvas::LETTER_WIDTH * scale_factor).round }
+        {
+          height: (Canvas::LETTER_HEIGHT * scale_factor).round,
+          width: (Canvas::LETTER_WIDTH * scale_factor).round
+        }
       end
 
       def max_width
         return Canvas::BITONAL_SIZE if bitonal?
-        [max_dimensions[:width], canvas.width].min
+        [max_dimensions[:width], canvas.width].max
       end
 
       def scale_factor
-        2.0
+        4.0
       end
 
       def bitonal?
