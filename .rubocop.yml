@@ -250,6 +250,7 @@ RSpec/VerifiedDoubles:
     - 'spec/derivative_services/image_derivative_service_spec.rb'
     - 'spec/derivative_services/jp2_derivative_service_spec.rb'
     - 'spec/jobs/ingest_intermediate_file_job_spec.rb'
+    - 'spec/derivative_services/image_chain_derivative_service_spec.rb'
 Style/FileName:
   Enabled: true
   Exclude:
