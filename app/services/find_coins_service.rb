@@ -22,13 +22,13 @@ class FindCoinsService
       missing_images << ["#{coin_number}O"] if obverse_files.empty?
       missing_images << ["#{coin_number}R"] if reverse_files.empty?
 
-      dupe_obverse_files = find_dupes(obverse_files)
-      dupe_reverse_files = find_dupes(reverse_files)
+      dupe_obverse_files = find_dupes(obverse_files)[:dupes]
+      dupe_reverse_files = find_dupes(reverse_files)[:dupes]
       dupe_images << dupe_obverse_files unless dupe_obverse_files.nil?
       dupe_images << dupe_reverse_files unless dupe_reverse_files.nil?
 
-      same_name_obverse_files = find_different_images_same_name(obverse_files)
-      same_name_reverse_files = find_different_images_same_name(reverse_files)
+      same_name_obverse_files = find_dupes(obverse_files)[:same_names]
+      same_name_reverse_files = find_dupes(reverse_files)[:same_names]
       same_name_images << same_name_obverse_files unless same_name_obverse_files.nil?
       same_name_images << same_name_reverse_files unless same_name_reverse_files.nil?
     end
@@ -48,22 +48,13 @@ class FindCoinsService
   end
 
   def find_dupes(file_paths)
-    return unless file_paths.count > 1
+    return { same_names: nil, dupes: nil } unless file_paths.count > 1
     checksums = []
     file_paths.each do |path|
       checksums << Digest::MD5.hexdigest(File.read(path))
     end
-    return file_paths if checksums.uniq.count == 1
-  end
-
-  def find_different_images_same_name(file_paths)
-    return unless file_paths.count > 1
-    checksums = []
-    file_paths.each do |path|
-      checksums << Digest::MD5.hexdigest(File.read(path))
-    end
-
-    return file_paths if checksums.uniq.count > 1
+    return { same_names: nil, dupes: file_paths} if checksums.uniq.count == 1
+    return { same_names: file_paths, dupes: nil } if checksums.uniq.count > 1
   end
 
   def coins
