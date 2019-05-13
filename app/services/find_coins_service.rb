@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'csv'
+require "csv"
+require "open3"
 
 class FindCoinsService
   attr_reader :db_adapter, :file_root, :logger
@@ -51,10 +52,16 @@ class FindCoinsService
     return { same_names: nil, dupes: nil } unless file_paths.count > 1
     checksums = []
     file_paths.each do |path|
-      checksums << Digest::MD5.hexdigest(File.read(path))
+      checksums << checksum(path)
     end
-    return { same_names: nil, dupes: file_paths} if checksums.uniq.count == 1
+
+    return { same_names: nil, dupes: file_paths } if checksums.uniq.count == 1
     return { same_names: file_paths, dupes: nil } if checksums.uniq.count > 1
+  end
+
+  def checksum(path)
+    stdout, _stderr, _status = Open3.capture3("cksum #{path}")
+    stdout.split(" ").first
   end
 
   def coins
