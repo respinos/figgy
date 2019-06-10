@@ -555,6 +555,9 @@ GEM
       addressable (~> 2.3)
       nokogiri (~> 1.5)
       omniauth (~> 1.2)
+    omniauth-rails_csrf_protection (0.1.2)
+      actionpack (>= 4.2)
+      omniauth (>= 1.3.1)
     open4 (1.3.4)
     openseadragon (0.3.3)
       rails (> 3.2.0)
@@ -927,6 +930,7 @@ DEPENDENCIES
   normalize-rails
   omniauth (~> 1.9)
   omniauth-cas
+  omniauth-rails_csrf_protection
   openseadragon
   pdf-reader!
   pg (~> 1.0)
