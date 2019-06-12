@@ -29,6 +29,13 @@ class ViewerConfiguration < ActiveSupport::HashWithIndifferentAccess
           {
             "shareEnabled" => false
           }
+        },
+        "avCenterPanel" =>
+        {
+          "options" =>
+          {
+            "posterImageExpanded" => true
+          }
         }
       }
     }
