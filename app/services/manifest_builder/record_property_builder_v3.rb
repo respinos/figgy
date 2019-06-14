@@ -8,7 +8,9 @@ class ManifestBuilder
       manifest = super
       manifest.viewing_direction = viewing_direction if viewing_direction.present? && manifest.respond_to?(:viewing_direction=)
       manifest.behavior = ["auto-advance"]
-      if record.resource.downloadable == ["none"]
+
+      # if record.resource.downloadable == ["none"]
+      if false
         manifest["service"] = [
           { "@context" => "http://universalviewer.io/context.json", "profile" => "http://universalviewer.io/ui-extensions-profile", "disableUI" => ["mediaDownload"] }
         ]
