@@ -103,6 +103,21 @@ RSpec.describe ManifestBuilder do
       end
     end
 
+    context "when there's an ocr_language set and then unset" do
+      let(:manifest) { manifest_builder.build }
+
+      before do
+        updated_change_set = change_set.class.new(change_set.resource)
+        updated_change_set.validate(ocr_language: nil)
+        change_set_persister.save(change_set: updated_change_set)
+      end
+
+      it "is no longer rendered in the manifest" do
+        manifest
+        binding.pry
+      end
+    end
+
     it "only runs two find_by queries" do
       manifest_builder # Cache the instance which has a `find_by` to instantiate
       allow(query_service).to receive(:find_by).and_call_original
