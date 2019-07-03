@@ -106,15 +106,20 @@ RSpec.describe ManifestBuilder do
     context "when there's an ocr_language set and then unset" do
       let(:manifest) { manifest_builder.build }
 
-      before do
+      it "is no longer rendered in the manifest" do
+        initial_builder = described_class.new(query_service.find_by(id: scanned_resource.id))
+        initial_output = initial_builder.build
+        expect(initial_output["service"]).to be_a Hash
+        expect(initial_output["service"]).to include "@context" => "http://iiif.io/api/search/0/context.json"
+        expect(initial_output["service"]).to include "label" => "Search within this item"
+        expect(initial_output["service"]).to include "profile" => "http://iiif.io/api/search/0/search"
+
         updated_change_set = change_set.class.new(change_set.resource)
         updated_change_set.validate(ocr_language: nil)
         change_set_persister.save(change_set: updated_change_set)
-      end
 
-      it "is no longer rendered in the manifest" do
-        manifest
-        binding.pry
+        output = manifest_builder.build
+        expect(output["service"]).to eq nil
       end
     end
 
