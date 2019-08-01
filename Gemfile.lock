@@ -224,6 +224,9 @@ GEM
     capistrano-rails-console (2.2.0)
       capistrano (>= 3.5.0, < 4.0.0)
       sshkit-interactive (~> 0.2.0)
+    capistrano-rvm (0.1.2)
+      capistrano (~> 3.0)
+      sshkit (~> 1.2)
     capybara (2.14.4)
       addressable
       mime-types (>= 1.16)
@@ -890,6 +893,7 @@ DEPENDENCIES
   capistrano-passenger
   capistrano-rails
   capistrano-rails-console
+  capistrano-rvm
   capybara-screenshot
   cocoon
   coffee-rails
