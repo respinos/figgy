@@ -1659,6 +1659,45 @@ RSpec.describe ChangeSetPersister do
         expect(tombstone.parent_id).to eq resource.id
       end
     end
+
+    # Restoring a cloud resource
+    context "when a tombstone for a `cloud` FileSet is restored" do
+      it "Restores a FileSet from the tombstone" do
+
+        # Create the FileSet
+        file = fixture_file_upload("files/example.tif", "image/tiff")
+        resource = FactoryBot.create_for_repository(:pending_scanned_resource, preservation_policy: "cloud", files: [file])
+        change_set = DynamicChangeSet.new(resource)
+        change_set.validate(state: "complete")
+
+        output = change_set_persister.save(change_set: change_set)
+        file_set = Wayfinder.for(output).members.first
+        change_set = DynamicChangeSet.new(file_set)
+        change_set_persister.delete(change_set: change_set)
+
+        tombstones = change_set_persister.query_service.find_all_of_model(model: Tombstone)
+        expect(tombstones.to_a.length).to eq 1
+        tombstone = tombstones.first
+        expect(tombstone.file_set_id).to eq file_set.id
+        expect(tombstone.file_set_title).to eq file_set.title
+        expect(tombstone.file_set_original_filename).to eq file_set.original_file.original_filename
+        expect(tombstone.deleted_at).to eq tombstones.first.created_at
+        expect(tombstone.preservation_object.preserved_object_id).to eq file_set.id
+        expect(tombstone.parent_id).to eq resource.id
+
+        # Restore the tombstone
+        tombstone_change_set = DynamicChangeSet.new(tombstone)
+        restored = change_set_persister.restore(change_set: tombstone_change_set)
+        expect(restored).to be_a FileSet
+        expect(restored.id).to eq file_set.id
+        expect(restored.title).to eq file_set.title
+        preservation_copy = restored.file_metadata.find(&:preservation_copy?)
+        expect(preservation_copy).to be_a FileMetadata
+        preserved_metadata = restored.file_metadata.find(&:preserved_metadata?)
+        expect(preserved_metadata).to be_a FileMetadata
+      end
+    end
+
     context "when deleting a `cloud` preservation_policy resource" do
       it "deletes all previously created FileSet tombstones for that parent, related PreservationObjects, and cleans up the Preservation file store" do
         file = fixture_file_upload("files/example.tif", "image/tiff")

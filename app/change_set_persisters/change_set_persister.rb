@@ -94,6 +94,21 @@ class ChangeSetPersister
       end
     end
 
+    def restore(change_set:)
+      new_file_set = FileSet.new(id: change_set.file_set_id)
+      new_file_set_change_set = FileSetChangeSet.new(new_file_set)
+      new_file_metadata = [change_set.preservation_object.metadata_node] + change_set.preservation_object.binary_nodes
+
+      # if new_file_set_change_set.validate(title: change_set.file_set_title, files: new_file_metadata)
+      persisted = nil
+      if new_file_set_change_set.validate(title: change_set.file_set_title)
+        persisted = save(change_set: new_file_set_change_set)
+        persisted.file_metadata = new_file_metadata
+      end
+
+      persisted
+    end
+
     def delete(change_set:)
       before_delete(change_set: change_set)
       persister.delete(resource: change_set.resource).tap do
