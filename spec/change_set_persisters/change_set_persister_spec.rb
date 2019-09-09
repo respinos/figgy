@@ -1085,7 +1085,7 @@ RSpec.describe ChangeSetPersister do
         child = FactoryBot.create_for_repository(:scanned_resource, read_groups: [])
         resource = FactoryBot.build(:scanned_resource, read_groups: [])
         resource.member_ids = [child.id]
-        change_set = DynamicChangeSet.new(resource)
+        change_set = ChangeSet.for(resource)
         resource = change_set_persister.save(change_set: change_set)
         adapter = Valkyrie::MetadataAdapter.find(:indexing_persister)
         child = adapter.query_service.find_by(id: child.id)
@@ -1125,7 +1125,7 @@ RSpec.describe ChangeSetPersister do
         members = Wayfinder.for(amc).members
         expect(members.first.state).to eq ["draft"]
 
-        change_set = DynamicChangeSet.new(amc)
+        change_set = ChangeSet.for(amc)
         change_set.validate(state: "complete")
         output = change_set_persister.save(change_set: change_set)
         expect(output.identifier.first).to eq "ark:/#{shoulder}#{blade}"
@@ -1141,7 +1141,7 @@ RSpec.describe ChangeSetPersister do
       it "propagates visibility" do
         FactoryBot.create_for_repository(:pending_private_scanned_resource, member_of_collection_ids: collection.id)
 
-        change_set = DynamicChangeSet.new(collection)
+        change_set = ChangeSet.for(collection)
         change_set.validate(title: "new title")
         output = change_set_persister.save(change_set: change_set)
 
@@ -1151,7 +1151,7 @@ RSpec.describe ChangeSetPersister do
       it "doesn't propagate read groups or state, having neither of these fields" do
         FactoryBot.create_for_repository(:pending_private_scanned_resource, member_of_collection_ids: collection.id)
 
-        change_set = DynamicChangeSet.new(collection)
+        change_set = ChangeSet.for(collection)
         change_set.validate(title: "new title", visibility: nil)
         output = change_set_persister.save(change_set: change_set)
 
@@ -1463,7 +1463,7 @@ RSpec.describe ChangeSetPersister do
     it "reindexes members of that collection on title change" do
       resource = FactoryBot.create_for_repository(:scanned_resource, member_of_collection_ids: [collection.id])
 
-      change_set = DynamicChangeSet.new(collection)
+      change_set = ChangeSet.for(collection)
       change_set.validate(title: "New Title")
 
       change_set_persister.save(change_set: change_set)
@@ -1477,7 +1477,7 @@ RSpec.describe ChangeSetPersister do
       box = FactoryBot.create_for_repository(:ephemera_box, member_ids: [folder.id])
       project = FactoryBot.create_for_repository(:ephemera_project, member_ids: [box.id], title: "Old Title")
 
-      change_set = DynamicChangeSet.new(project)
+      change_set = ChangeSet.for(project)
       change_set.validate(title: "New Title")
 
       change_set_persister.save(change_set: change_set)
@@ -1496,7 +1496,7 @@ RSpec.describe ChangeSetPersister do
       file_set = FactoryBot.create_for_repository(:file_set)
       file_set2 = FactoryBot.create_for_repository(:file_set)
 
-      change_set = DynamicChangeSet.new(playlist)
+      change_set = ChangeSet.for(playlist)
       change_set.validate(title: "Test Title", file_set_ids: [file_set2.id.to_s, file_set.id.to_s])
       expect(change_set.file_set_ids).to eq [file_set2.id, file_set.id]
 
@@ -1521,7 +1521,7 @@ RSpec.describe ChangeSetPersister do
       # Attempt to create new proxies for both file_set1 and file_set2 using
       # `file_set_ids` on the ChangeSet. file_set1 is already attached through
       # `proxy`.
-      change_set = DynamicChangeSet.new(playlist)
+      change_set = ChangeSet.for(playlist)
       change_set.validate(title: "Test Title", file_set_ids: [file_set1.id.to_s, file_set2.id.to_s])
       output = change_set_persister.save(change_set: change_set)
       members = query_service.find_members(resource: output)
@@ -1544,7 +1544,7 @@ RSpec.describe ChangeSetPersister do
         resource.preservation_policy = "cloud"
         resource = change_set_persister.metadata_adapter.persister.save(resource: resource)
         change_set_persister.metadata_adapter.persister.save(resource: file_set)
-        change_set = DynamicChangeSet.new(resource)
+        change_set = ChangeSet.for(resource)
 
         change_set_persister.save(change_set: change_set)
         expect(PreserveChildrenJob).to have_received(:perform_later).exactly(1).times
@@ -1556,7 +1556,7 @@ RSpec.describe ChangeSetPersister do
       it "saves to a backup location" do
         file = fixture_file_upload("files/example.tif", "image/tiff")
         resource = FactoryBot.create_for_repository(:pending_scanned_resource, preservation_policy: "cloud", files: [file])
-        change_set = DynamicChangeSet.new(resource)
+        change_set = ChangeSet.for(resource)
         change_set.validate(state: "complete")
 
         output = change_set_persister.save(change_set: change_set)
@@ -1582,7 +1582,7 @@ RSpec.describe ChangeSetPersister do
       it "preserves it inline" do
         file = fixture_file_upload("files/example.tif", "image/tiff")
         resource = FactoryBot.create_for_repository(:pending_scanned_resource, preservation_policy: "cloud", files: [file])
-        change_set = DynamicChangeSet.new(resource)
+        change_set = ChangeSet.for(resource)
         change_set.validate(state: "complete")
 
         output = change_set_persister.save(change_set: change_set)
@@ -1597,7 +1597,7 @@ RSpec.describe ChangeSetPersister do
       it "refreshes the preserved metadata" do
         file = fixture_file_upload("files/example.tif", "image/tiff")
         resource = FactoryBot.create_for_repository(:complete_scanned_resource, preservation_policy: "cloud", files: [file])
-        change_set_persister.save(change_set: DynamicChangeSet.new(resource))
+        change_set_persister.save(change_set: ChangeSet.for(resource))
         file_set = Wayfinder.for(resource).members.first
 
         modified = File.mtime(Rails.root.join("tmp", "cloud_backup_test", resource.id.to_s, "#{resource.id}.json"))
@@ -1624,7 +1624,7 @@ RSpec.describe ChangeSetPersister do
         change_set_persister.persister.save(resource: file_set)
         resource = FactoryBot.create_for_repository(:complete_scanned_resource, preservation_policy: "cloud", member_ids: [file_set.id])
 
-        change_set = DynamicChangeSet.new(resource)
+        change_set = ChangeSet.for(resource)
         change_set_persister.save(change_set: change_set)
 
         expect(File.exist?(Rails.root.join("tmp", "cloud_backup_test", resource.id.to_s, "data", resource.member_ids.first.to_s, "example-#{file_set.intermediate_files.first.id}.tif"))).to eq true
@@ -1663,12 +1663,12 @@ RSpec.describe ChangeSetPersister do
       it "deletes all previously created FileSet tombstones for that parent, related PreservationObjects, and cleans up the Preservation file store" do
         file = fixture_file_upload("files/example.tif", "image/tiff")
         resource = FactoryBot.create_for_repository(:pending_scanned_resource, preservation_policy: "cloud", files: [file])
-        change_set = DynamicChangeSet.new(resource)
+        change_set = ChangeSet.for(resource)
         change_set.validate(state: "complete")
 
         output = change_set_persister.save(change_set: change_set)
         file_set = Wayfinder.for(output).members.first
-        change_set = DynamicChangeSet.new(file_set)
+        change_set = ChangeSet.for(output)
         change_set_persister.delete(change_set: change_set)
 
         tombstones = change_set_persister.query_service.find_all_of_model(model: Tombstone)
@@ -1728,7 +1728,7 @@ RSpec.describe ChangeSetPersister do
         xml = fixture_file_upload("files/geo_metadata/fgdc.xml", "application/xml; schema=fgdc")
         vector_resource = FactoryBot.create_for_repository(:complete_vector_resource, files: [file, xml], preservation_policy: "cloud")
 
-        output = change_set_persister.save(change_set: DynamicChangeSet.new(vector_resource))
+        output = change_set_persister.save(change_set: ChangeSet.for(vector_resource))
         preservation_object = Wayfinder.for(output).preservation_objects.first
         expect(preservation_object).not_to eq nil
 
@@ -1743,7 +1743,7 @@ RSpec.describe ChangeSetPersister do
       it "preserves the file nodes" do
         file = fixture_file_upload("files/audio_file.wav", "audio/x-wav")
         resource = FactoryBot.create_for_repository(:complete_media_resource, preservation_policy: "cloud")
-        change_set = DynamicChangeSet.new(resource, files: [file])
+        change_set = ChangeSet.for(resource, files: [file])
         output = change_set_persister.save(change_set: change_set)
 
         preservation_object = Wayfinder.for(output).preservation_objects.first
@@ -1776,18 +1776,18 @@ RSpec.describe ChangeSetPersister do
         file = fixture_file_upload("files/example.tif", "image/tiff")
         resource = FactoryBot.create_for_repository(:pending_scanned_resource, files: [file])
         parent = FactoryBot.create_for_repository(:pending_scanned_resource, preservation_policy: "cloud", member_ids: resource.id)
-        change_set = DynamicChangeSet.new(parent)
+        change_set = ChangeSet.for(parent)
         change_set.validate(state: "complete")
         other_parent = FactoryBot.create_for_repository(:complete_scanned_resource, preservation_policy: "cloud")
         # Save in nested structure.
         change_set_persister.save(change_set: change_set)
         # Preserve `other_parent`
-        change_set_persister.save(change_set: DynamicChangeSet.new(other_parent))
+        change_set_persister.save(change_set: ChangeSet.for(other_parent))
 
         reloaded = change_set_persister.query_service.find_by(id: resource.id)
 
         # Move resource from parent to other_parent
-        change_set = DynamicChangeSet.new(reloaded)
+        change_set = ChangeSet.for(reloaded)
         change_set.append_id = other_parent.id
         change_set_persister.save(change_set: change_set)
 
@@ -1810,7 +1810,7 @@ RSpec.describe ChangeSetPersister do
         file = fixture_file_upload("files/example.tif", "image/tiff")
         volume = FactoryBot.create_for_repository(:pending_scanned_resource, files: [file])
         parent = FactoryBot.create_for_repository(:pending_scanned_resource, preservation_policy: "cloud", member_ids: volume.id)
-        change_set = DynamicChangeSet.new(parent)
+        change_set = ChangeSet.for(parent)
         change_set.validate(state: "complete")
 
         output = change_set_persister.save(change_set: change_set)
@@ -1827,7 +1827,7 @@ RSpec.describe ChangeSetPersister do
         resource = FactoryBot.create_for_repository(:complete_scanned_resource, preservation_policy: "cloud")
         file = fixture_file_upload("files/example.tif", "image/tiff")
         change_set_persister.buffer_into_index do |buffered_change_set_persister|
-          change_set = DynamicChangeSet.new(resource)
+          change_set = ChangeSet.for(resource)
           buffered_change_set_persister.save(change_set: change_set)
         end
         start_checksum = Wayfinder.for(resource).preservation_objects[0].metadata_node.checksum
@@ -1835,7 +1835,7 @@ RSpec.describe ChangeSetPersister do
         expect(Wayfinder.for(reloaded).preservation_object.metadata_node).to be_present
         output = nil
         change_set_persister.buffer_into_index do |buffered_change_set_persister|
-          change_set = DynamicChangeSet.new(reloaded)
+          change_set = ChangeSet.for(reloaded)
           change_set.validate(files: [file])
 
           output = buffered_change_set_persister.save(change_set: change_set)
@@ -1877,7 +1877,7 @@ RSpec.describe ChangeSetPersister do
         member_of_collection_ids: [coll.id]
       )
 
-      coll_change_set = DynamicChangeSet.new(coll)
+      coll_change_set = ChangeSet.for(coll)
       coll_change_set.validate(reorganize: true)
       change_set_persister.save(change_set: coll_change_set)
 
