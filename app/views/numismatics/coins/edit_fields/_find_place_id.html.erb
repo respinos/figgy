@@ -1,8 +1,9 @@
 <%= f.input :find_place_id,
             label: "Find Place",
-            collection: @find_places&.sort_by(&:title),
             label_method: :title,
             value_method: :id,
-            input_html: { multiple: f.object.multiple?(key) },
+            input_html: { multiple: f.object.multiple?(key), ref: "find_place" },
             include_blank: true,
             required: f.object.required?(key) %>
+
+<ajax-select type-name='Place'></ajax-select>
