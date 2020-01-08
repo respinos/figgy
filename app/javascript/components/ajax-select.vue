@@ -1,5 +1,5 @@
 <template>
-  <v-select label="id" :value="selected" @input=byebug :filterable="false" :options="options" @search="onSearch">
+  <v-select label="id" :value="selected" @input=updateValue :filterable="false" :options="options" @search="onSearch">
     <template slot="no-options">
       type to search for numismatic places...
     </template>
@@ -36,10 +36,9 @@ export default {
     }
   },
   methods: {
-    byebug (value) {
-      debugger  // eslint-disable-line
+    updateValue (value) {
       value = value || { id: null }
-      $("#numismatics_coin_find_place_id").val(value.id)
+      document.getElementById('numismatics_coin_find_place_id').value = value.id
       this.selected = value
     },
     searchURL (search) {
