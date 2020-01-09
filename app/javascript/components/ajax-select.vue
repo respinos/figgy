@@ -30,7 +30,6 @@ export default {
     },
     targetId: {
       type: String,
-      default: 'numismatics_coin_find_place_id', // This needs to be required and passed in from the template
       required: true
     },
     searchURLBase: {
@@ -50,6 +49,11 @@ export default {
       return `${this.searchURLBase}/?f%5Bhuman_readable_type_ssim%5D%5B%5D=${this.typeName}&all_models=true&q=${escape(this.query)}`
     }
   },
+  created: function () {
+    const id = `id:${document.getElementById(this.targetId).value}`
+    const result = this.search((state) => state, id, this)
+    console.log(result)
+  },
   methods: {
     updateValue (value) {
       value = value || { id: null }
@@ -63,7 +67,6 @@ export default {
     },
     search: _.debounce((loading, query, vm) => {
       vm.query = query
-
       fetch(
         vm.searchURL
       ).then(res => {
