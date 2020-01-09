@@ -18,6 +18,7 @@
 <script>
 import vSelect from 'vue-select'
 import _ from 'lodash'
+
 export default {
   name: 'AjaxSelect',
   components: {
@@ -50,8 +51,8 @@ export default {
     }
   },
   created: function () {
-    const id = `id:${document.getElementById(this.targetId).value}`
-    this.query = id
+    const id = document.getElementById(this.targetId).value
+    this.query = `id:${id}`
 
     fetch(
       this.searchURL

@@ -1,6 +1,2 @@
 <%= f.label :find_place_id %>
-<%= f.hidden_field :find_place_id %>
-<ajax-select
-  target-id='numismatics_coin_find_place_id'
-  type-name='Place'>
-</ajax-select>
+<%= f.hidden_field :find_place_id, ajax_select_type: "Place" %>
