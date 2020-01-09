@@ -27,30 +27,45 @@ export default {
     typeName: {
       type: String,
       required: true
+    },
+    targetId: {
+      type: String,
+      default: 'numismatics_coin_find_place_id', // This needs to be required and passed in from the template
+      required: true
+    },
+    searchURLBase: {
+      type: String,
+      default: '/catalog.json/'
     }
   },
   data () {
     return {
       options: [],
-      selected: null
+      selected: null,
+      query: null
+    }
+  },
+  computed: {
+    searchURL: function () {
+      return `${this.searchURLBase}/?f%5Bhuman_readable_type_ssim%5D%5B%5D=${this.typeName}&all_models=true&q=${escape(this.query)}`
     }
   },
   methods: {
     updateValue (value) {
       value = value || { id: null }
-      document.getElementById('numismatics_coin_find_place_id').value = value.id
+      const target = document.getElementById(this.targetId)
+      target.value = value.id
       this.selected = value
-    },
-    searchURL (search) {
-      return `http://localhost:3000/catalog.json/?f%5Bhuman_readable_type_ssim%5D%5B%5D=${this.typeName}&all_models=true&q=${escape(search)}`
     },
     onSearch (search, loading) {
       loading(true)
       this.search(loading, search, this)
     },
-    search: _.debounce((loading, search, vm) => {
+    search: _.debounce((loading, query, vm) => {
+      vm.query = query
+
       fetch(
-        vm.searchURL(search)
+        vm.searchURL
       ).then(res => {
         res.json().then(json => (vm.options = json.response.docs))
         loading(false)
