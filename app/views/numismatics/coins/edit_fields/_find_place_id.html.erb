@@ -1,7 +1,6 @@
-<%= f.input :find_place_id,
-            label: "Find Place",
-            required: f.object.required?(key) %>
-
+<%= f.label :find_place_id %>
+<%= f.hidden_field :find_place_id %>
 <ajax-select
   target-id='numismatics_coin_find_place_id'
-  type-name='Place'></ajax-select>
+  type-name='Place'>
+</ajax-select>

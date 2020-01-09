@@ -53,15 +53,16 @@ export default {
     const id = `id:${document.getElementById(this.targetId).value}`
     this.query = id
 
-    const results = fetch(
+    fetch(
       this.searchURL
     ).then(res => {
       return res.json()
     }).then(json => {
-      console.log(json)
-      this.options = json.response.docs
-      // We are not handling empty results here
-      this.selected = this.options[0]
+      const docs = json.response.docs
+      if (docs.length > 0) {
+        this.options = json.response.docs
+        this.selected = this.options[0]
+      }
     })
   },
   methods: {
@@ -75,27 +76,12 @@ export default {
       loading(true)
       this.search(loading, search, this)
     },
-    retrieve (query) {
-      this.query = query
-
-      const p = fetch(
-        this.searchURL
-      ).then(res => {
-        res.json().then(json => {
-          debugger
-          // This needs to be restructured
-          return json.response.docs
-        })
-      }).then(data => data)
-      debugger
-      return p
-    },
     search: _.debounce((loading, query, vm) => {
-      vm.query = query
+      vm.query = `*${query}*`
       fetch(
         vm.searchURL
       ).then(res => {
-        res.json().then(json => vm.options = json.response.docs)
+        res.json().then(json => (vm.options = json.response.docs))
         loading(false)
       })
     }, 350)
