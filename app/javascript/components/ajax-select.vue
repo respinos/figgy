@@ -51,9 +51,15 @@ export default {
     }
   },
   created: function () {
-    const id = document.getElementById(this.targetId).value
-    this.query = `id:${id}`
+    const doc = document.getElementById(this.targetId)
 
+    // Gets the current value of the input or a value passed as an attribute
+    const id = doc.getAttribute('ajax_select_initial_id') || doc.value
+
+    // Guard clause to return if no id is set
+    if (id === '') { return }
+
+    this.query = `id:${id}`
     fetch(
       this.searchURL
     ).then(res => {
@@ -78,7 +84,7 @@ export default {
       this.search(loading, search, this)
     },
     search: _.debounce((loading, query, vm) => {
-      vm.query = `*${query}*`
+      vm.query = `${query}*`
       fetch(
         vm.searchURL
       ).then(res => {

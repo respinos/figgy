@@ -1,2 +1,2 @@
-<%= f.label :numismatic_accession_id %>
+<%= f.label :numismatic_accession_id, required: f.object.required?(key) %>
 <%= f.hidden_field :numismatic_accession_id, ajax_select_type: "Accession"  %>

@@ -1,2 +1,2 @@
-<%= f.label :find_place_id %>
+<%= f.label :find_place_id, required: f.object.required?(key) %>
 <%= f.hidden_field :find_place_id, ajax_select_type: "Place" %>
