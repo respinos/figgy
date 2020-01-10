@@ -59,6 +59,7 @@ export default {
     // Guard clause to return if no id is set
     if (id === '') { return }
 
+    // Fetch the initial document and set that as the selected value
     this.query = `id:${id}`
     fetch(
       this.searchURL

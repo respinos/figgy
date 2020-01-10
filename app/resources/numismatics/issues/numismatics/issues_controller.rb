@@ -8,23 +8,8 @@ module Numismatics
       storage_adapter: Valkyrie.config.storage_adapter
     )
 
-    before_action :load_numismatic_references, only: [:new, :edit]
     before_action :load_monograms, only: [:new, :edit]
     before_action :load_monogram_attributes, only: [:new, :edit]
-    before_action :load_numismatic_places, only: [:new, :edit]
-    before_action :load_numismatic_people, only: [:new, :edit]
-
-    def load_numismatic_places
-      @numismatic_places = query_service.find_all_of_model(model: Numismatics::Place).map(&:decorate)
-    end
-
-    def load_numismatic_people
-      @numismatic_people = query_service.find_all_of_model(model: Numismatics::Person).map(&:decorate)
-    end
-
-    def load_numismatic_references
-      @numismatic_references = query_service.find_all_of_model(model: Numismatics::Reference).map(&:decorate).sort_by(&:short_title)
-    end
 
     def load_monograms
       @numismatic_monograms = query_service.find_all_of_model(model: Numismatics::Monogram).map(&:decorate)
@@ -59,7 +44,7 @@ module Numismatics
         numismatic_monogram_attributes = @numismatic_monograms.map do |monogram|
           member_thumbnail_url = build_monogram_thumbnail_url(monogram)
           member_url = solr_document_path(id: monogram.id)
-          member_monogram_ids = resource.decorate.decorated_numismatic_monograms.map(&:id)
+          member_monogram_ids = params[:id] ? resource.decorate.decorated_numismatic_monograms.map(&:id) : []
 
           {
             id: monogram.id.to_s,
