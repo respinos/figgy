@@ -14,6 +14,13 @@ Release notes template:
 
 -->
 
+# 2020-01-16
+
+## Added
+
+* Implements a Monogram creation widget within the Issue forms for Numismatic
+  resources
+
 # 2020-01-06
 
 ## Fixed
