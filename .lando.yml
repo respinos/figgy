@@ -1,17 +1,20 @@
 name: figgy
 services:
-  test_solr:
+  figgy_test_solr:
     type: solr:7
     portforward: true
     core: figgy-core-test
     config:
       dir: solr/config
-  test_db:
+  figgy_test_db:
     type: postgres:10
     portforward: true
-  # dev_solr:
-  #   type: solr:7
-  #   portforward: true
-  #   core: figgy-core-dev
-  #   config:
-  #     dir: solr/config
+  figgy_development_solr:
+    type: solr:7
+    portforward: true
+    core: figgy-core-dev
+    config:
+      dir: solr/config
+  figgy_development_db:
+    type: postgres:10
+    portforward: true

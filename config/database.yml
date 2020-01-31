@@ -1,4 +1,4 @@
-<% lando_configuration = JSON.parse(`lando info --format json`).group_by{|x| x["service"]}["test_db"][0] %>
+<% require_relative 'config/initializers/figgy.rb' %>
 development: &default
   adapter: postgresql
   database: figgy_development
@@ -10,10 +10,10 @@ development: &default
 
 test:
   <<: *default
-  host: <%= ENV["FIGGY_DB_HOST"] || lando_configuration["external_connection"]["host"] %>
-  port: <%= lando_configuration["external_connection"]["port"] %>
-  username: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_USERNAME"] : ENV["FIGGY_DB_USERNAME"] || lando_configuration["creds"]["user"] %>
-  password: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_PASSWORD"] : ENV["FIGGY_DB_PASSWORD"] || lando_configuration["creds"]["password"] %>
+  host: <%= ENV["FIGGY_DB_HOST"] || Figgy.lando_config.database[:host] %>
+  port: <%= Figgy.lando_config.database[:port] %>
+  username: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_USERNAME"] : ENV["FIGGY_DB_USERNAME"] || Figgy.lando_config.database[:username] %>
+  password: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_PASSWORD"] : ENV["FIGGY_DB_PASSWORD"] || Figgy.lando_config.database[:password] %>
   database: figgy_test
 
 production: &deploy
