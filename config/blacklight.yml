@@ -9,13 +9,13 @@
 # however you want.
 # jetty_path is only required for rake tasks that need to know
 # how to start up solr, generally for automated testing.
-
+<% lando_configuration = JSON.parse(`lando info --format json`).group_by{|x| x["service"]}["test_solr"][0]["external_connection"] %>
 development:
   adapter: solr
   url: <%= ENV['SOLR_URL'] || "http://127.0.0.1:8983/solr/figgy-core-dev" %>
 test: &test
   adapter: solr
-  url: <%= ENV['SOLR_URL'] || "http://127.0.0.1:#{ENV['TEST_JETTY_PORT'] || 8984}/solr/figgy-core-test" %>
+  url: <%= ENV['SOLR_URL'] || "http://#{lando_configuration["host"]}:#{lando_configuration["port"]}/solr/figgy-core-test" %>
 production:
   adapter: solr
   url: <%= ENV['SOLR_URL'] || "http://127.0.0.1:8983/solr/figgy-core" %>
