@@ -6,17 +6,17 @@ development: &default
   pool: <%= Integer(ENV.fetch("DB_POOL", 30)) %>
   reaping_frequency: <%= Integer(ENV.fetch("DB_REAPING_FREQUENCY", 20)) %>
   timeout: 5000
-  host: <%= (ENV["FIGGY_DB_HOST"] || ENV["lando_figgy_test_db_conn_host"]) %>
-  port: <%= ENV["lando_figgy_test_db_conn_port"] %>
-  username: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_USERNAME"] : (ENV["FIGGY_DB_USERNAME"] || ENV["lando_figgy_test_db_creds_user"]) %>
-  password: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_PASSWORD"] : (ENV["FIGGY_DB_PASSWORD"] || ENV["lando_figgy_test_db_creds_password"]) %>
+  host: <%= (ENV["FIGGY_DB_HOST"] || ENV["lando_figgy_db_conn_host"]) %>
+  port: <%= ENV["lando_figgy_db_conn_port"] %>
+  username: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_USERNAME"] : (ENV["FIGGY_DB_USERNAME"] || ENV["lando_figgy_db_creds_user"]) %>
+  password: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_PASSWORD"] : (ENV["FIGGY_DB_PASSWORD"] || ENV["lando_figgy_db_creds_password"]) %>
 
 test:
   <<: *default
-  host: <%= (ENV["FIGGY_DB_HOST"] || ENV["lando_figgy_test_db_conn_host"]) %>
-  port: <%= ENV["lando_figgy_test_db_conn_port"] %>
-  username: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_USERNAME"] : (ENV["FIGGY_DB_USERNAME"] || ENV["lando_figgy_test_db_creds_user"]) %>
-  password: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_PASSWORD"] : (ENV["FIGGY_DB_PASSWORD"] || ENV["lando_figgy_test_db_creds_password"]) %>
+  host: <%= (ENV["FIGGY_DB_HOST"] || ENV["lando_figgy_db_conn_host"]) %>
+  port: <%= ENV["lando_figgy_db_conn_port"] %>
+  username: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_USERNAME"] : (ENV["FIGGY_DB_USERNAME"] || ENV["lando_figgy_db_creds_user"]) %>
+  password: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_PASSWORD"] : (ENV["FIGGY_DB_PASSWORD"] || ENV["lando_figgy_db_creds_password"]) %>
   database: figgy_test
 
 production: &deploy

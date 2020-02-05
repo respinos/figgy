@@ -6,15 +6,12 @@ services:
     core: figgy-core-test
     config:
       dir: solr/config
-  figgy_test_db:
-    type: postgres:10
-    portforward: true
   figgy_development_solr:
     type: solr:7
     portforward: true
     core: figgy-core-dev
     config:
       dir: solr/config
-  figgy_development_db:
+  figgy_db:
     type: postgres:10
     portforward: true
