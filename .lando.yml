@@ -15,3 +15,7 @@ services:
   figgy_db:
     type: postgres:10
     portforward: true
+  figgy_redis:
+    type: redis:5
+    persist: false
+    portforward: true
