@@ -1,4 +1,3 @@
-<% require_relative 'config/initializers/figgy.rb' %>
 development: &default
   adapter: postgresql
   database: figgy_development
@@ -10,10 +9,9 @@ development: &default
 
 test:
   <<: *default
-  host: <%= ENV["FIGGY_DB_HOST"] || Figgy.lando_config.database[:host] %>
-  port: <%= Figgy.lando_config.database[:port] %>
-  username: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_USERNAME"] : ENV["FIGGY_DB_USERNAME"] || Figgy.lando_config.database[:username] %>
-  password: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_PASSWORD"] : ENV["FIGGY_DB_PASSWORD"] || Figgy.lando_config.database[:password] %>
+  host: <%= ENV["FIGGY_DB_HOST"] %>
+  username: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_USERNAME"] : ENV["FIGGY_DB_USERNAME"] %>
+  password: <%= Figgy.read_only_mode ? ENV["FIGGY_DB_RO_PASSWORD"] : ENV["FIGGY_DB_PASSWORD"] %>
   database: figgy_test
 
 production: &deploy
