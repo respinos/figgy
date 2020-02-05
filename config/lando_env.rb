@@ -12,6 +12,6 @@ if Rails.env.development? || Rails.env.test?
       end
     end
   rescue StandardError
-    Rails.logger.debug "Unable to load Lando configuration."
+    nil
   end
 end
