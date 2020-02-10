@@ -1,0 +1,6 @@
+  <%= f.input :metal,
+              label: 'Metal',
+              as: :select,
+              collection: f.object.model.decorate.metals,
+              input_html: { multiple: f.object.multiple?(key) },
+              required: f.object.required?(key) %>

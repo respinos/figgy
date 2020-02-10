@@ -1,0 +1,6 @@
+  <%= f.input :shape,
+              label: 'Shape',
+              as: :select,
+              collection: f.object.model.decorate.shapes,
+              input_html: { multiple: f.object.multiple?(key) },
+              required: f.object.required?(key) %>

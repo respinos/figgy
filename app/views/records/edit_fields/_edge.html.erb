@@ -1,0 +1,6 @@
+  <%= f.input :edge,
+              label: 'Edge',
+              as: :select,
+              collection: f.object.model.decorate.edges,
+              input_html: { multiple: f.object.multiple?(key) },
+              required: f.object.required?(key) %>

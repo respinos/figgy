@@ -58,6 +58,7 @@ module Numismatics
              :decorated_master,
              :decorated_rulers,
              :members,
+             :issues,
              to: :wayfinder
 
     def artists
@@ -135,6 +136,30 @@ module Numismatics
 
     def subjects
       numismatic_subject.map { |s| s.decorate.title }
+    end
+
+    def object_types
+      issues.map { |i| i.object_type }.flatten.compact.uniq
+    end
+
+    def denominations
+      issues.map { |i| i.denomination }.flatten.compact.uniq
+    end
+
+    def metals
+      issues.map { |i| i.metal }.flatten.compact.uniq
+    end
+
+    def shapes
+      issues.map { |i| i.shape }.flatten.compact.uniq
+    end
+
+    def colors
+      issues.map { |i| i.color }.flatten.compact.uniq
+    end
+
+    def edges
+      issues.map { |i| i.edge }.flatten.compact.uniq
     end
   end
 end

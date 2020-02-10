@@ -1,0 +1,6 @@
+<select class="" id="numismatics_issue_object_type">
+  <option selected="selected"></option>
+  <% f.object.model.decorate.object_types.each do |object_type| %>
+    <option><%= object_type %></option>
+  <% end %>
+</select>
