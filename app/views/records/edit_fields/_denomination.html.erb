@@ -1,6 +1,12 @@
-  <%= f.input :denomination,
-              label: 'Denomination',
-              as: :select,
-              collection: f.object.model.decorate.denominations,
-              input_html: { multiple: f.object.multiple?(key) },
-              required: f.object.required?(key) %>
+<div class="form-group">
+
+  <label for="numismatics_issue_denomination" class="control-label select optional">Denominations</label>
+  <input id="denomination" type="hidden" name="numismatics_issue[denomination]" />
+
+  <select class="form-control select2" id="numismatics_issue_denomination" data-hidden="#denomination">
+    <option selected="selected"></option>
+    <% f.object.model.decorate.denominations.each do |denomination| %>
+      <option><%= denomination %></option>
+    <% end %>
+  </select>
+</div>
