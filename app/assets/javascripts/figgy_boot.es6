@@ -36,7 +36,7 @@ export default class Initializer {
     // causing this to not run. Manually calling it so facet more links work.
     Blacklight.ajaxModal.setup_modal()
     $("optgroup:not([label=Favorites])").addClass("closed")
-    $("select").selectpicker({'liveSearch': true})
+    $("select:not(.select2)").selectpicker({'liveSearch': true})
     $(".datatable").DataTable()
   }
 
@@ -80,6 +80,8 @@ export default class Initializer {
       const $form = $element.parent('form')
       new ParentResourcesTables($element, $form)
     })
+
+    $('select.select2').select2({ tabs: true })
   }
 
   initialize_bbox() {
