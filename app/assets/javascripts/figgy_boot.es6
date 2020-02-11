@@ -81,7 +81,7 @@ export default class Initializer {
       new ParentResourcesTables($element, $form)
     })
 
-    $('select.select2').select2({ tabs: true })
+    $('select.select2').select2({ tags: true })
   }
 
   initialize_bbox() {
