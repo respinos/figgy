@@ -139,27 +139,27 @@ module Numismatics
     end
 
     def object_types
-      issues.map { |i| i.object_type }.flatten.compact.uniq
+      issues.map(&:object_type).flatten.compact.uniq
     end
 
     def denominations
-      issues.map { |i| i.denomination }.flatten.compact.uniq
+      issues.map(&:denomination).flatten.compact.uniq
     end
 
     def metals
-      issues.map { |i| i.metal }.flatten.compact.uniq
+      issues.map(&:metal).flatten.compact.uniq
     end
 
     def shapes
-      issues.map { |i| i.shape }.flatten.compact.uniq
+      issues.map(&:shape).flatten.compact.uniq
     end
 
     def colors
-      issues.map { |i| i.color }.flatten.compact.uniq
+      issues.map(&:color).flatten.compact.uniq
     end
 
     def edges
-      issues.map { |i| i.edge }.flatten.compact.uniq
+      issues.map(&:edge).flatten.compact.uniq
     end
   end
 end
