@@ -81,7 +81,18 @@ export default class Initializer {
       new ParentResourcesTables($element, $form)
     })
 
-    $('select.select2').select2({ tags: true })
+    $('select.select2').select2({
+      tags: true,
+      placeholder: "Nothing selected"
+    }).on('select2:select', (event) => {
+      const $target = $(event.target)
+      const selected = $target.select2('data')
+      const selectedItem = selected.shift()
+      const value = selectedItem.text
+      const $hidden = $($target.data('hidden'))
+
+      $hidden.val(value)
+    })
   }
 
   initialize_bbox() {
