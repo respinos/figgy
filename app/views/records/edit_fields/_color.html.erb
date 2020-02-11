@@ -1,12 +1,12 @@
 <div class="form-group">
 
   <label for="numismatics_issue_color" class="control-label select optional">Color</label>
-  <input id="color" type="hidden" name="numismatics_issue[color]" />
+  <input id="color" type="hidden" name="numismatics_issue[color]" value="<%= f.object.model.color.first %>" />
 
   <select class="form-control select2" id="numismatics_issue_color" data-hidden="#color">
-    <option selected="selected"></option>
+    <option <% f.object.model.color.blank? ? 'selected' : '' %></option>
     <% f.object.model.decorate.colors.each do |color| %>
-      <option><%= color %></option>
+      <option <% f.object.model.color == color ? 'selected' : '' %> ><%= color %></option>
     <% end %>
   </select>
 </div>
