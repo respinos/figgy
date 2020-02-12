@@ -81,17 +81,54 @@ export default class Initializer {
       new ParentResourcesTables($element, $form)
     })
 
-    $('select.select2').select2({
-      tags: true,
-      placeholder: "Nothing selected"
-    }).on('select2:select', (event) => {
-      const $target = $(event.target)
-      const selected = $target.select2('data')
-      const selectedItem = selected.shift()
-      const value = selectedItem.text
-      const $hidden = $($target.data('hidden'))
+    $('select.select2').each((_i, element) => {
+      const $element = $(element)
+      const property = $element.data('model-attribute')
 
-      $hidden.val(value)
+      $element.select2({
+        tags: true,
+        placeholder: "Nothing selected"
+      }).on('select2:select', (event) => {
+        const $target = $(event.target)
+        const selected = $target.select2('data')
+        const selectedItem = selected.shift()
+        const value = selectedItem.text
+        const $hidden = $($target.data('hidden'))
+
+        $hidden.val(value)
+      })
+
+      // We are not faceting for these
+      const appended = []
+
+      $.ajax({
+        type: 'GET',
+        url: '/catalog.json?f%5Bhuman_readable_type_ssim%5D%5B%5D=Issue&q='
+      }).then(data => {
+        const response = data['response']
+        const docs = response['docs']
+        const field = `${property}_ssim`
+        docs.forEach(doc => {
+
+          const values = doc[field]
+          const value = values.shift()
+          if (appended.indexOf(value) === -1) {
+            appended.push(value)
+            const selected = value === $element.data('default-value')
+            const option = new Option(value, value, selected, selected)
+            $element.append(option).trigger('change')
+
+            if (selected) {
+              $element.trigger({
+                type: 'select2:select',
+                params: {
+                  data: { id: value, text: value }
+                }
+              })
+            }
+          }
+        })
+      })
     })
   }
 

@@ -58,8 +58,11 @@ module Numismatics
              :decorated_master,
              :decorated_rulers,
              :members,
-             :issues,
              to: :wayfinder
+
+    def issues
+      []
+    end
 
     def artists
       numismatic_artist.map { |a| a.decorate.title }
